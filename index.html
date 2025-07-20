@@ -1,0 +1,253 @@
+
+<!-- Home Page -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breezo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barrio&family=Cedarville+Cursive&family=Galindo&family=Inder&family=Underdog&family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inder&display=swap" rel="stylesheet" />
+
+    <!--Style-->
+    <link rel="stylesheet" href="css/index.css" />
+
+    <!--Javascript-->
+    <script src="js/index.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<!----------------------------------------NavBar---------------------------------------->
+
+    <nav class="navbar">
+        <div class="navcontainer">
+
+            <!-- Logo -->
+
+            <img src="img/Breezol.png" class="logo" alt="Breezo Logo" />
+
+
+            <div class="titlecontainer">
+                <a href="index.html">Home</a>
+                <a href="blog.html">BLOG</a>
+                <a href="privacy.html">PRIVACY</a>
+                <a href="contact.html">CONTACT</a>
+
+                <!-- Put search-container here -->
+
+                <div class="search-container">
+                    <button id="searchBtn" title="Search"><span class="wave-emoji">🔍</span></button>
+                    <input type="text" id="cityInput" placeholder="City" />
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Toggle -->
+
+        <div class="Toggle">
+            <div class="Togglecontainer">
+
+                <!-- Toggle icon -->
+
+                <button id="themeToggle" title="Toggle Theme"><span class="wave-emoji">🌙</span></button>
+            </div>
+        </div>
+    </nav>
+
+<!--------------------------------------Upper part(1)-------------------------------------->
+
+    <section class="upper">
+        <div class="uppercontainer">
+
+            <!--left-->
+
+            <div class="upperleft">
+                <div class="upperleftcontainer">
+                    <h1>Welcome to Breezo <span class="wave-emoji">👋</span></h1>
+                    <p id="location"></p>
+                    <p id="time"></p>
+                </div>
+
+                <div class="weathercontainer">
+                    <h3><span class="cloud-emoji">⛅</span> Weather Dashboard</h3>
+
+                    <div class="tabs">
+                        <button id="todayBtn">Today</button>
+                        <button id="weekBtn">Week</button>
+                    </div>
+
+                    <div id="today" class="tab-content">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+
+                    <div id="week" class="tab-content" style="display: none;">
+                        <div class="day-cards" id="weekCards"></div>
+                        <canvas id="dailyChart"></canvas>
+                    </div>
+
+                </div>
+
+                <div class="feedback-box">
+                    <h3>Rate Your Experience</h3>
+
+                    <!-- Name input -->
+
+                    <input type="text" id="feedbackName" placeholder="Your Name" />
+
+                    <!-- Star rating -->
+
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+
+                    <!-- Comment box -->
+
+                    <textarea id="feedbackComment" placeholder="Write a comment (optional)"></textarea>
+
+                    <button id="submitFeedback">Send Feedback</button>
+                    <p id="feedbackStatus"></p>
+                </div>
+
+                <script>
+                    let selectedRating = 0;
+
+                    document.querySelectorAll(".star").forEach(star => {
+                        star.addEventListener("click", () => {
+                            selectedRating = parseInt(star.getAttribute("data-value"));
+                            highlightStars(selectedRating);
+                        });
+                    });
+
+                    function highlightStars(rating) {
+                        document.querySelectorAll(".star").forEach(star => {
+                            const value = parseInt(star.getAttribute("data-value"));
+                            star.classList.toggle("selected", value <= rating);
+                        });
+                    }
+
+                    document.getElementById("submitFeedback").addEventListener("click", () => {
+                        const name = document.getElementById("feedbackName").value.trim();
+                        const comment = document.getElementById("feedbackComment").value.trim();
+
+                        if (!name) {
+                            document.getElementById("feedbackStatus").textContent = "❗ Please enter your name.";
+                            return;
+                        }
+
+                        if (selectedRating === 0) {
+                            document.getElementById("feedbackStatus").textContent = "❗ Please select a star rating.";
+                            return;
+                        }
+
+                        const formData = new URLSearchParams();
+                        formData.append("name", name);
+                        formData.append("rating", selectedRating);
+                        formData.append("comment", comment);
+                        formData.append("page", window.location.pathname);
+
+                        fetch("https://script.google.com/macros/s/AKfycbzG9oFkCO67euKHhaQBy3qdbE1jhlgGjC3jjVWQ-L5SD8QV68IYTNuL2wjDmH4IY7KTYQ/exec", {
+                            method: "POST",
+                            body: formData
+                        }).then(response => {
+                            if (response.ok) {
+                                document.getElementById("feedbackStatus").textContent = "✅ Feedback sent!";
+                                document.getElementById("feedbackName").value = "";
+                                document.getElementById("feedbackComment").value = "";
+                                selectedRating = 0;
+                                highlightStars(0);
+                            } else {
+                                document.getElementById("feedbackStatus").textContent = "❌ Failed to send feedback.";
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                            document.getElementById("feedbackStatus").textContent = "❌ Error sending feedback.";
+                        });
+                    });
+                </script>
+
+            </div>
+
+            <!-- right -->
+            <div class="upperright">
+                <div class="upperrightcontainer">
+                    <h2><span class="wave-emoji">📅</span>Calendar</h2>
+                    <div class="calendar" id="calendar"></div>
+                </div>
+
+                <div class="today-highlights" id="todayHighlights">
+                    <h2><span class="wave-emoji">📌</span> Today’s Highlights</h2>
+                    <div class="highlight-cards">
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+<!---------------------------------------- Footer -------------------------------------->
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-left">
+                <div class="footer-logo">
+                    <span class="dot"></span>
+                    <span class="brand">dreamy.</span>
+                </div>
+                <p>Breezo is your smart companion for real-time weather updates. Accurate forecasts,
+                    interactive charts, and personalized insights—so you're always one step ahead of the weather.</p>
+            </div>
+            
+            <div class="footer-links">
+                <a href="about.html">ABOUT</a>
+                <a href="blog.html">BLOG</a>
+                <a href="privacy.html">PRIVACY</a>
+                <a href="contact.html">CONTACT</a>
+            </div>
+
+            <!-- Social Footer -->
+
+            <div class="social-footer">
+                <a href="mailto:&#112;&#97;&#119;&#97;&#114;&#104;&#97;&#114;&#115;&#104;&#97;&#50;&#50;&#49;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;" target="_blank" rel="noopener noreferrer" title="Gmail">
+                    <img src="https://img.icons8.com/ios-filled/24/7a7a7a/gmail.png" alt="Gmail" />
+                </a>
+                <a href="https://www.linkedin.com/in/shivatimika-pawar-02551a276/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                    <img src="https://img.icons8.com/ios-filled/24/7a7a7a/linkedin.png" alt="LinkedIn" />
+                </a>
+                <a href="https://github.com/ShivatimikaPawar" target="_blank" rel="noopener noreferrer" title="GitHub">
+                    <img src="https://img.icons8.com/ios-glyphs/24/7a7a7a/github.png" alt="GitHub" />
+                </a>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2016 Breezo Inc. All rights reserved</p>
+            <div class="made">
+                <span>Made by</span>
+                <span class="name"><span class="pumping-heart">💗</span> Shivatimika</span>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+# Basic system files (cross-platform)
+.DS_Store       # macOS metadata
+Thumbs.db       # Windows thumbnails
+desktop.ini     # Windows folder config
+
+# Optional (future-proofing)
+*.log           # Log files
+*.tmp           # Temporary files
