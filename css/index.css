@@ -250,7 +250,7 @@ body {
 
 
 .upperleftcontainer {
-  background-image: url('img/upperleftbg.jpg');
+  background-image: url('../img/upperleftbg.jpg');
   background-size: cover;
   background-position: center;
   padding: 15px;
